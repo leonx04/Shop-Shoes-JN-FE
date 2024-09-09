@@ -1,0 +1,57 @@
+ /* Basic typography and structure */
+ body {
+   font-family: "Poppins", sans-serif;
+   margin-top: 50px;
+   /* Adjust for navbar height */
+ }
+
+ /* Mặc định của navbar và nút toggle */
+ .navbar {
+   background-color: white;
+ }
+
+ .navbar-toggler {
+   background-color: white;
+ }
+
+ .navbar-nav .nav-link,
+ .navbar-brand {
+   color: black;
+ }
+
+ /* Khi màn hình nhỏ */
+ @media (max-width: 768px) {
+   .navbar {
+     background-color: #333 !important;
+   }
+
+   .navbar-toggler {
+     background-color: #333 !important;
+   }
+
+   .navbar-toggler-icon {
+     filter: invert(1);
+     /* Chuyển màu icon toggle sang trắng để nhìn rõ trên nền tối */
+   }
+
+   .navbar-nav .nav-link,
+   .navbar-brand {
+     color: white !important;
+     /* Chữ trong navbar và navbar-brand màu trắng */
+   }
+ }
+
+ /* Footer */
+ footer {
+   background-color: #222;
+   color: white;
+ }
+
+ footer a {
+   color: #999;
+ }
+
+ footer a:hover {
+   color: white;
+   text-decoration: underline;
+ }

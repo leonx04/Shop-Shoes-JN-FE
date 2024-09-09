@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Shop Shoes JN</title>
+    <link
+      rel="shortcut icon"
+      href="https://scontent.fhan17-1.fna.fbcdn.net/v/t39.30808-1/458405366_1183817689336362_1281788781532322135_n.jpg?stp=dst-jpg_s200x200&_nc_cat=106&ccb=1-7&_nc_sid=0ecb9b&_nc_eui2=AeHiC9k8nGXnqSuC4EBYSnq0IAvTm7idakUgC9ObuJ1qRSN0VC4VVmuIrWvszJOe5hb-_y1e740SnjXbBOJBu6B0&_nc_ohc=LRqXQ-YxoSUQ7kNvgHOvUZI&_nc_ht=scontent.fhan17-1.fna&oh=00_AYAYQK5RUXU0BGNm8HnFljrriVTsc2kjfDQVQspyavgQsQ&oe=66E378C7"
+      type="image/x-icon"
+    />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="form login-form">
+        <h2>Login</h2>
+        <div class="form-group">
+          <input type="text" id="loginUsername" placeholder="Username" />
+          <div class="error-message" id="loginUsernameError"></div>
+        </div>
+        <div class="form-group">
+          <input type="password" id="loginPassword" placeholder="Password" />
+          <div class="error-message" id="loginPasswordError"></div>
+        </div>
+        <div class="form-group">
+          <button onclick="login()">Login</button>
+        </div>
+        <hr>
+        <div class="form-group">
+          <a
+            href="http://127.0.0.1:5500/index.html"
+            ><button class="btn btn-secondary">Return Home</button></a
+          >
+        </div>
+        <div class="mt-3 text-center">
+          <a href="http://127.0.0.1:5500/app/reset-password/reset-password.html">Forgot Password?</a>
+      </div>
+        <div class="switch-link">
+          Don't have an account?
+          <a href="#" onclick="switchToRegister()">Register here</a>
+        </div>
+      </div>
+
+      <div class="form register-form">
+        <h2>Register</h2>
+        <div class="form-group">
+          <input type="text" id="registerName" placeholder="Full Name" />
+          <div class="error-message" id="registerNameError"></div>
+        </div>
+        <div class="form-group">
+          <input type="text" id="registerUsername" placeholder="Username" />
+          <div class="error-message" id="registerUsernameError"></div>
+        </div>
+        <div class="form-group">
+          <input type="password" id="registerPassword" placeholder="Password" />
+          <div class="error-message" id="registerPasswordError"></div>
+        </div>
+        <div class="form-group">
+          <input type="email" id="registerEmail" placeholder="Email" />
+          <div class="error-message" id="registerEmailError"></div>
+        </div>
+        <div class="form-group">
+          <button onclick="register()">Register</button>
+        </div>
+        <hr>
+        <div class="form-group">
+          <a
+            href="http://127.0.0.1:5500/index.html"
+            ><button class="btn btn-secondary">Return Home</button></a
+          >
+        </div>
+        <div class="switch-link">
+          Already have an account?
+          <a href="#" onclick="switchToLogin()">Login here</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div
+      class="modal fade"
+      id="successModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="successModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="successModalLabel">Success</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="successMessage">
+            Registration successful!
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div
+      class="modal fade"
+      id="errorModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="errorModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="errorModalLabel">Error</h5>
+          </div>
+          <div class="modal-body" id="errorMessage">Registration failed.</div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Error Modal -->
+    <div
+      class="modal fade"
+      id="loginErrorModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="loginErrorModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginErrorModalLabel">Login Error</h5>
+          </div>
+          <div class="modal-body" id="loginErrorMessage">Login failed.</div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="login.js"></script>
+  </body>
+</html>
