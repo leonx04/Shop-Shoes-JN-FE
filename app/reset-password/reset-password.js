@@ -1,6 +1,7 @@
 const API_BASE_URL = 'http://localhost:8080/api/auth';
 let userEmail = '';
 let otpCountdown;
+let otpExpirationTime;
 
 // DOM elements
 const requestOtpForm = document.getElementById('requestOtpForm');
@@ -11,6 +12,9 @@ const resendOtpButton = document.getElementById('resendOtp');
 const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
 const modalMessage = document.getElementById('modalMessage');
 const formTitle = document.getElementById('formTitle');
+
+// Lấy DOM element cho spinner loading
+const loadingSpinner = document.getElementById('loadingSpinner');
 
 // Function to update page title and form title
 function updateTitle(title) {
@@ -26,6 +30,16 @@ function showAlert(message) {
     alertModal.show();
 }
 
+// Hiện spinner loading
+function showLoading() {
+    loadingSpinner.classList.remove('d-none');
+}
+
+// Ẩn spinner loading
+function hideLoading() {
+    loadingSpinner.classList.add('d-none');
+}
+
 // Validate email
 function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -39,10 +53,10 @@ function validatePassword(password) {
 
 // Start OTP countdown
 function startOtpCountdown() {
-    let countdown = 30;
+    let countdown = 50;
     const otpInput = document.getElementById('otp');
     const verifyOtpButton = document.querySelector('#verifyOtpForm button[type="submit"]');
-    
+
     otpStatus.textContent = `OTP còn hiệu lực trong ${countdown} giây.`;
     resendOtpButton.disabled = true;
     otpInput.disabled = false;
@@ -51,7 +65,7 @@ function startOtpCountdown() {
     otpCountdown = setInterval(() => {
         countdown--;
         otpStatus.textContent = `OTP còn hiệu lực trong ${countdown} giây.`;
-        
+
         if (countdown <= 0) {
             clearInterval(otpCountdown);
             otpStatus.textContent = 'OTP đã hết hạn. Vui lòng gửi lại.';
@@ -60,11 +74,14 @@ function startOtpCountdown() {
             verifyOtpButton.disabled = true;
         }
     }, 1000);
+
+    otpExpirationTime = new Date().getTime() + 50000; // 50 seconds from now
 }
 
 // Handle OTP request
 async function handleOtpRequest(email) {
     try {
+        showLoading();
         const response = await fetch(`${API_BASE_URL}/forgot-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -79,18 +96,24 @@ async function handleOtpRequest(email) {
             updateTitle('Nhập mã OTP');
             startOtpCountdown();
         } else {
-            throw new Error('Lỗi khi gửi OTP');
+            const data = await response.json();
+            if (data?.message) {
+                showAlert(data.message);
+            } else {
+                showAlert('Không tìm thấy tài khoản với email này.');
+            }
         }
     } catch (error) {
         showAlert('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+    } finally {
+        hideLoading();
     }
 }
 
-// Event listeners
 requestOtpForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value.trim();
-    
+
     if (!validateEmail(email)) {
         showAlert('Vui lòng nhập một địa chỉ email hợp lệ.');
         return;
@@ -102,18 +125,19 @@ requestOtpForm.addEventListener('submit', async (e) => {
 verifyOtpForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const otp = document.getElementById('otp').value.trim();
-    
+
     if (otp.length !== 6 || isNaN(otp)) {
         showAlert('Vui lòng nhập mã OTP 6 chữ số hợp lệ.');
         return;
     }
 
-    if (document.getElementById('otp').disabled) {
+    if (new Date().getTime() > otpExpirationTime) {
         showAlert('OTP đã hết hạn. Vui lòng yêu cầu mã OTP mới.');
         return;
     }
 
     try {
+        showLoading();
         const response = await fetch(`${API_BASE_URL}/validate-otp`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -131,15 +155,22 @@ verifyOtpForm.addEventListener('submit', async (e) => {
         }
     } catch (error) {
         showAlert(error.message);
+    } finally {
+        hideLoading();
     }
 });
 
 resetPasswordForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const email = document.getElementById('email').value.trim();
     const newPassword = document.getElementById('newPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-    const otp = document.getElementById('otp').value.trim();
-    
+
+    if (!validateEmail(email)) {
+        showAlert('Vui lòng nhập một địa chỉ email hợp lệ.');
+        return;
+    }
+
     if (!validatePassword(newPassword)) {
         showAlert('Mật khẩu phải có ít nhất 8 ký tự.');
         return;
@@ -151,34 +182,36 @@ resetPasswordForm.addEventListener('submit', async (e) => {
     }
 
     try {
+        showLoading();
         const response = await fetch(`${API_BASE_URL}/reset-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `email=${encodeURIComponent(userEmail)}&otp=${encodeURIComponent(otp)}&newPassword=${encodeURIComponent(newPassword)}`
+            body: `email=${encodeURIComponent(email)}&newPassword=${encodeURIComponent(newPassword)}`
         });
-
+    
         if (response.ok) {
-            showAlert('Mật khẩu đã được đặt lại thành công. Vui lòng đăng nhập bằng mật khẩu mới.');
+            const data = await response.json();
+            showAlert(data.message);
             document.getElementById('alertModal').addEventListener('hidden.bs.modal', () => {
                 window.location.href = 'http://127.0.0.1:5500/app/login/login.html'; 
             });
         } else {
-            throw new Error('Không thể đặt lại mật khẩu. Vui lòng thử lại.');
+            const data = await response.json();
+            showAlert(data.message);
         }
     } catch (error) {
-        showAlert(error.message);
+        showAlert('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+    } finally {
+        hideLoading();
     }
 });
 
 resendOtpButton.addEventListener('click', async () => {
-    const otpInput = document.getElementById('otp');
-    const verifyOtpButton = document.querySelector('#verifyOtpForm button[type="submit"]');
-    
-    otpInput.disabled = false;
-    verifyOtpButton.disabled = false;
-    otpInput.value = '';
-    
-    await handleOtpRequest(userEmail);
+    if (new Date().getTime() > otpExpirationTime) {
+        await handleOtpRequest(userEmail);
+    } else {
+        showAlert('Vui lòng chờ đến khi mã OTP hết hạn trước khi yêu cầu mã mới.');
+    }
 });
 
 // Initialize the page title
