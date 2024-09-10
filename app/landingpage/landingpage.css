@@ -26,10 +26,7 @@
     margin-bottom: 30px;
   }
 
-  /* Tăng khoảng cách giữa các card (ví dụ trong phần Pricing) */
-  .pricing-plan {
-    margin-bottom: 30px; /* Tăng khoảng cách giữa các card */
-  }
+  
   h1,
   h2,
   h3 {
@@ -60,6 +57,7 @@
   /* Pricing section */
   .pricing-plan {
     transition: all 0.3s ease;
+    margin-bottom: 30px; 
   }
 
   .pricing-plan:hover {

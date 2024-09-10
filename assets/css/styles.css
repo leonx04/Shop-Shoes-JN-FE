@@ -55,3 +55,54 @@
    color: white;
    text-decoration: underline;
  }
+#backToTopBtn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 99;
+  border: 4px solid transparent; /* Create space for the gradient border */
+  border-radius: 50%;
+  background-color: #333;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  font-size: 18px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-image: linear-gradient(white, white), radial-gradient(circle, #ff6347, #ff4500); /* Gradient background */
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+}
+
+#backToTopBtn:hover {
+  background-color: #555;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+#backToTopBtn:active {
+  transform: scale(0.95);
+}
+
+/* Add a subtle bounce effect when the button appears */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  #backToTopBtn {
+    padding: 10px;
+    font-size: 16px;
+  }
+}

@@ -12,8 +12,6 @@ const resendOtpButton = document.getElementById('resendOtp');
 const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
 const modalMessage = document.getElementById('modalMessage');
 const formTitle = document.getElementById('formTitle');
-
-// Lấy DOM element cho spinner loading
 const loadingSpinner = document.getElementById('loadingSpinner');
 
 // Function to update page title and form title
@@ -30,12 +28,12 @@ function showAlert(message) {
     alertModal.show();
 }
 
-// Hiện spinner loading
+// Show spinner loading
 function showLoading() {
     loadingSpinner.classList.remove('d-none');
 }
 
-// Ẩn spinner loading
+// Hide spinner loading
 function hideLoading() {
     loadingSpinner.classList.add('d-none');
 }
@@ -48,7 +46,25 @@ function validateEmail(email) {
 
 // Validate password
 function validatePassword(password) {
-    return password.length >= 8;
+    // Password must contain at least one letter, one number, and be at least 8 characters long
+    const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    return re.test(password);
+}
+
+// Toggle password visibility
+function togglePasswordVisibility(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = document.querySelector(`[data-target="${inputId}"]`);
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
 }
 
 // Start OTP countdown
@@ -162,17 +178,11 @@ verifyOtpForm.addEventListener('submit', async (e) => {
 
 resetPasswordForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('email').value.trim();
     const newPassword = document.getElementById('newPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
 
-    if (!validateEmail(email)) {
-        showAlert('Vui lòng nhập một địa chỉ email hợp lệ.');
-        return;
-    }
-
     if (!validatePassword(newPassword)) {
-        showAlert('Mật khẩu phải có ít nhất 8 ký tự.');
+        showAlert('Mật khẩu phải có ít nhất 8 ký tự, bao gồm cả chữ và số.');
         return;
     }
 
@@ -186,7 +196,7 @@ resetPasswordForm.addEventListener('submit', async (e) => {
         const response = await fetch(`${API_BASE_URL}/reset-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `email=${encodeURIComponent(email)}&newPassword=${encodeURIComponent(newPassword)}`
+            body: `email=${encodeURIComponent(userEmail)}&newPassword=${encodeURIComponent(newPassword)}`
         });
     
         if (response.ok) {
@@ -212,6 +222,14 @@ resendOtpButton.addEventListener('click', async () => {
     } else {
         showAlert('Vui lòng chờ đến khi mã OTP hết hạn trước khi yêu cầu mã mới.');
     }
+});
+
+// Add event listeners for password toggle
+document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', () => {
+        const targetId = icon.getAttribute('data-target');
+        togglePasswordVisibility(targetId);
+    });
 });
 
 // Initialize the page title
