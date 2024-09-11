@@ -20,6 +20,10 @@ angular.module('myApp').config(['$routeProvider', function($routeProvider) {
         templateUrl: 'app/order/order.html',
         controller: 'OrderController'
     })
+    .when('/product-detail/:id', {
+        templateUrl: 'app/product-detail/detail-product.html',
+        controller: 'ProductsDetailController'
+    })
     .otherwise({
         redirectTo: '/'
     });

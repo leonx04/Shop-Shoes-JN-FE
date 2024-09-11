@@ -43,8 +43,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initial fetch and display of products
   fetchAndDisplayProducts();
 
-  // Set up interval to refresh products every 5 seconds
-  setInterval(fetchAndDisplayProducts, 5000);
+  // Set up interval to refresh products every 50 seconds
+  setInterval(fetchAndDisplayProducts, 50000);
 
   // Add event listener for the "Shop Now" button
   const shopNowBtn = document.querySelector('.hero-section .btn-success');
