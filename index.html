@@ -35,6 +35,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    
   </head>
   <body>
     <!-- Navbar Section -->
@@ -60,18 +61,28 @@
             <li class="nav-item">
               <a class="nav-link" href="#!products">Products</a>
             </li>
-            <li>
+            <li class="d-flex">
               <a
-                class="btn btn-dark"
                 href="http://127.0.0.1:5500/app/login/login.html"
+                id="loginButton"
+                class="btn btn-dark"
                 >Login</a
               >
+            </li>
+            <li class="d-flex">
+              <button
+                id="logoutButton"
+                class="btn btn-danger"
+                style="display: none"
+              >
+                Logout
+              </button>
             </li>
           </ul>
         </div>
       </div>
     </nav>
-    <div ng-view></div>
+    <div ng-view class="mt-3"></div>
 
     <!-- Footer Section -->
     <footer class="py-4 bg-dark text-white text-center">
@@ -86,9 +97,7 @@
         </p>
       </div>
     </footer>
-    <button id="backToTopBtn" title="Go to top">
-      🔝
-    </button>
+    <button id="backToTopBtn" title="Go to top">🔝</button>
     <!-- Thêm AngularJS và ngRoute vào dự án -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>

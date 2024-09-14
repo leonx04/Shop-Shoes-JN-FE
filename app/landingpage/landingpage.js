@@ -13,11 +13,11 @@ function fetchAndDisplayProducts() {
               <img src="${product.imageUrl}" alt="${product.name}" class="img-fluid mb-3 pricing-image">
               <h3>${product.name}</h3>
               <p class="mb-4">$${product.price}</p>
-              <a href="${product.code}" class="btn btn-outline-primary mt-auto">Buy Now <i class="fas fa-shopping-basket"></i></a>
+              <a href="/product-detail/${product.code}" class="btn btn-outline-primary mt-auto">Buy Now <i class="fas fa-shopping-basket"></i></a>
             </div>
           </div>
         `;
-        pricingContainer.innerHTML += productHtml;
+        pricingContainer.innerHTML += productHtml; // Append new product
       });
     })
     .catch((error) => console.error("Error fetching pricing data:", error));

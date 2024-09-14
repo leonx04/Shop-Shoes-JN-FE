@@ -129,14 +129,26 @@ function login() {
     const password = document.getElementById('loginPassword').value;
 
     showLoading();
-    axios.post('http://localhost:8080/api/login', {
-        username, password
-    })
+    axios.post('http://localhost:8080/api/login', { username, password })
         .then(function (response) {
-            window.location.href = "http://127.0.0.1:5500/index.html";
+            if (response.data?.token) {
+                localStorage.setItem('jwtToken', response.data.token);
+                localStorage.setItem('username', username);
+                window.location.href = "http://127.0.0.1:5500/index.html";
+            } else {
+                throw new Error('Đăng nhập thành công, nhưng không nhận được token');
+            }
         })
         .catch(function (error) {
-            document.getElementById('loginErrorMessage').innerText = 'Đăng nhập thất bại: ' + (error.response ? error.response.data : error.message);
+            let errorMessage = 'Đăng nhập thất bại: ';
+            if (error.response?.data) {
+                errorMessage += error.response.data.message || error.response.data;
+            } else if (error.request) {
+                errorMessage += 'Không nhận được phản hồi từ server';
+            } else {
+                errorMessage += error.message;
+            }
+            document.getElementById('loginErrorMessage').innerText = errorMessage;
             $('#loginErrorModal').modal('show');
         })
         .finally(function () {

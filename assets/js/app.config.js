@@ -6,7 +6,8 @@ angular.module('myApp').config(['$routeProvider', function($routeProvider) {
     })
     .when('/products', {
         templateUrl: 'app/products/products.html',
-        controller: 'ProductsController'
+        controller: 'ProductsController',
+        CSS: "/app/products/product.css"
     })
     .when('/cart', {
         templateUrl: 'app/cart/cart.html',

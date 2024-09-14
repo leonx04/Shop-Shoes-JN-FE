@@ -1,1 +1,130 @@
-<h1>Xin chào sản phẩm đây</h1>
+<div class="container-fluid">
+    <div class="row">
+      <!-- Bộ lọc bên trái -->
+      <div class="col-md-3 col-lg-2 filter-section">
+        <!-- Thanh tìm kiếm -->
+        <div class="mb-4">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm...">
+            <button class="btn btn-primary" type="button">Tìm kiếm</button>
+          </div>
+        </div>
+
+        <!-- Lọc theo giá -->
+        <div class="mb-4">
+          <h5>Giá tiền</h5>
+          <div class="input-group">
+            <input type="number" class="form-control" placeholder="Từ" aria-label="Từ">
+            <input type="number" class="form-control" placeholder="Đến" aria-label="Đến">
+          </div>
+        </div>
+
+        <!-- Lọc theo màu sắc -->
+        <div class="mb-4">
+          <h5>Màu sắc</h5>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="mauDo">
+            <label class="form-check-label" for="mauDo">Đỏ</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="mauXanh">
+            <label class="form-check-label" for="mauXanh">Xanh</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="mauDen">
+            <label class="form-check-label" for="mauDen">Đen</label>
+          </div>
+        </div>
+
+        <!-- Lọc theo thương hiệu -->
+        <div class="mb-4">
+          <h5>Thương hiệu</h5>
+          <select class="form-select">
+            <option selected>Chọn thương hiệu</option>
+            <option value="1">Nike</option>
+            <option value="2">Adidas</option>
+            <option value="3">Puma</option>
+          </select>
+        </div>
+
+        <!-- Lọc theo thể loại -->
+        <div class="mb-4">
+          <h5>Thể loại</h5>
+          <select class="form-select">
+            <option selected>Chọn thể loại</option>
+            <option value="1">Thể thao</option>
+            <option value="2">Thời trang</option>
+            <option value="3">Casual</option>
+          </select>
+        </div>
+
+        <!-- Lọc theo size -->
+        <div class="mb-4">
+          <h5>Size</h5>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="size38">
+            <label class="form-check-label" for="size38">38</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="size39">
+            <label class="form-check-label" for="size39">39</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="size40">
+            <label class="form-check-label" for="size40">40</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phần hiển thị sản phẩm bên phải -->
+      <div class="col-md-9 col-lg-10 product-list">
+        <!-- Danh sách sản phẩm -->
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          <!-- Sản phẩm 1 -->
+          <div class="col product-card">
+            <div class="card h-100">
+              <img src="https://via.placeholder.com/150" class="card-img-top" alt="Sản phẩm 1">
+              <div class="card-body">
+                <h5 class="card-title">Sản phẩm 1</h5>
+                <p class="card-text">Mô tả ngắn gọn của sản phẩm 1.</p>
+                <p class="card-text text-danger">500,000 VND</p>
+              </div>
+            </div>
+          </div>
+          <!-- Sản phẩm 2 -->
+          <div class="col product-card">
+            <div class="card h-100">
+              <img src="https://via.placeholder.com/150" class="card-img-top" alt="Sản phẩm 2">
+              <div class="card-body">
+                <h5 class="card-title">Sản phẩm 2</h5>
+                <p class="card-text">Mô tả ngắn gọn của sản phẩm 2.</p>
+                <p class="card-text text-danger">600,000 VND</p>
+              </div>
+            </div>
+          </div>
+          <!-- Sản phẩm 3 -->
+          <div class="col product-card">
+            <div class="card h-100">
+              <img src="https://via.placeholder.com/150" class="card-img-top" alt="Sản phẩm 3">
+              <div class="card-body">
+                <h5 class="card-title">Sản phẩm 3</h5>
+                <p class="card-text">Mô tả ngắn gọn của sản phẩm 3.</p>
+                <p class="card-text text-danger">700,000 VND</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phân trang -->
+        <nav aria-label="Page navigation example" class="mt-4">
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Trước</a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Sau</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
