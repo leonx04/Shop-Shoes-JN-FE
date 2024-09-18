@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat - Shoes JN</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f0f2f5;
+        }
+        .chat-header {
+            background-color: #4a90e2;
+            color: white;
+            padding: 1rem;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            max-width: 70%;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .user-message {
+            align-self: flex-end;
+            background-color: #dcf8c6;
+            border-bottom-right-radius: 5px;
+        }
+        .bot-message {
+            align-self: flex-start;
+            background-color: white;
+            border-bottom-left-radius: 5px;
+        }
+        .chat-input {
+            background-color: white;
+            padding: 1rem;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        .chat-input form {
+            display: flex;
+        }
+        .chat-input input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background-color: #f0f2f5;
+        }
+        .chat-input button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .chat-input button:hover {
+            background-color: #3a7bc8;
+        }
+        .suggested-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .suggested-question {
+            background-color: #e9ecef;
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .suggested-question:hover {
+            background-color: #ced4da;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1 class="h4 mb-0"><i class="fas fa-shoe-prints me-2"></i>AI Chat - Shoes JN</h1>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="suggested-questions" id="suggestedQuestions"></div>
+        <div class="chat-input">
+            <form id="chatForm">
+                <input type="text" id="userInput" placeholder="Nhập câu hỏi của bạn..." required>
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
+        const suggestedQuestions = document.getElementById('suggestedQuestions');
+
+        // Thay thế 'YOUR_GROQ_API_KEY' bằng API key thực của bạn
+        const GROQ_API_KEY = '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';
+
+        const predefinedQA = {
+            "Thời gian giao hàng là bao lâu?": "Thời gian giao hàng thông thường của Shoes JN là 3-5 ngày làm việc. Chúng tôi luôn cố gắng đảm bảo đơn hàng được giao đến tay khách hàng nhanh nhất có thể. Đối với các khu vực nội thành, thời gian giao hàng có thể nhanh hơn, chỉ từ 1-2 ngày.",
+            "Giới thiệu về Shoes JN": "Shoes JN là cửa hàng giày hàng đầu, chuyên cung cấp các mẫu giày cao cấp, thời trang và thoải mái. Chúng tôi tự hào mang đến cho khách hàng những sản phẩm chất lượng từ các thương hiệu nổi tiếng trên thế giới cũng như các mẫu độc quyền của Shoes JN. Với hơn 10 năm kinh nghiệm trong ngành, chúng tôi cam kết mang đến trải nghiệm mua sắm tuyệt vời nhất cho khách hàng.",
+            "Các mẫu giày mới nhất": "Shoes JN luôn cập nhật các mẫu giày mới nhất theo xu hướng thời trang. Hiện tại, chúng tôi đang có các bộ sưu tập mới như giày thể thao công nghệ Air Cushion, giày công sở da thật cao cấp, và các mẫu sneaker limited edition. Bạn có thể xem chi tiết tại trang chủ của website hoặc ghé thăm cửa hàng để trải nghiệm trực tiếp.",
+            "Chính sách đổi trả": "Shoes JN có chính sách đổi trả linh hoạt trong vòng 30 ngày kể từ ngày mua hàng. Sản phẩm đổi trả phải còn nguyên tem mác, chưa qua sử dụng và không bị hư hỏng. Chúng tôi sẽ hỗ trợ đổi size hoặc mẫu mã khác tùy theo nhu cầu của khách hàng. Trong trường hợp trả hàng, chúng tôi sẽ hoàn tiền đầy đủ cho quý khách.",
+            "Cách chọn size giày phù hợp": "Để chọn size giày phù hợp, bạn có thể tham khảo bảng size chi tiết trên website của chúng tôi. Ngoài ra, chúng tôi khuyên bạn nên đo chiều dài bàn chân và cộng thêm khoảng 0.5-1cm để có không gian thoải mái cho ngón chân. Nếu bạn còn phân vân, hãy liên hệ với đội ngũ tư vấn của Shoes JN, chúng tôi sẽ giúp bạn chọn được size giày phù hợp nhất."
+        };
+
+        function addSuggestedQuestions() {
+            suggestedQuestions.innerHTML = '';
+            Object.keys(predefinedQA).forEach(question => {
+                const button = document.createElement('button');
+                button.classList.add('suggested-question');
+                button.textContent = question;
+                button.addEventListener('click', () => {
+                    addMessage('user', question);
+                    addMessage('bot', predefinedQA[question]);
+                });
+                suggestedQuestions.appendChild(button);
+            });
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userMessage = userInput.value.trim();
+            if (userMessage) {
+                addMessage('user', userMessage);
+                userInput.value = '';
+                if (predefinedQA[userMessage]) {
+                    addMessage('bot', predefinedQA[userMessage]);
+                } else {
+                    await getBotResponse(userMessage);
+                }
+            }
+        });
+
+        function addMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+            messageElement.textContent = message;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function getBotResponse(userMessage) {
+            try {
+                const response = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
+                    model: "mixtral-8x7b-32768",
+                    messages: [
+                        {
+                            role: "system",
+                            content: "Bạn là trợ lý AI chuyên nghiệp cho Shoes JN, một cửa hàng giày cao cấp. Hãy trả lời câu hỏi của khách hàng một cách lịch sự, hữu ích và thân thiện. Cung cấp thông tin chi tiết về các sản phẩm giày, xu hướng thời trang, và tư vấn về việc chọn giày phù hợp."
+                        },
+                        {
+                            role: "user",
+                            content: userMessage
+                        }
+                    ]
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${GROQ_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const botResponse = response.data.choices[0]?.message?.content || "Xin lỗi, tôi không thể xử lý yêu cầu của bạn lúc này.";
+                addMessage('bot', botResponse);
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('bot', 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.');
+            }
+        }
+
+        // Thêm tin nhắn chào mừng và câu hỏi gợi ý
+        addMessage('bot', 'Xin chào! Tôi là trợ lý AI của Shoes JN. Tôi có thể giúp gì cho bạn hôm nay?');
+        addSuggestedQuestions();
+    </script>
+</body>
+</html>
